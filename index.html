@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Barcode slip generator</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
+<script type="text/javascript" src='https://rawgithub.com/gsklee/ngStorage/master/ngStorage.js'></script>
+<script src="app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.8.0/dist/barcodes/JsBarcode.code128.min.js"></script>
+<style>
+body {
+  background: rgb(204,204,204);
+}
+page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+}
+page[size="A4"] {
+  width: 21cm;
+  height: 29.7cm;
+}
+page[size="A4"][layout="portrait"] {
+  width: 21cm;
+  height:29.7cm;
+}
+td{
+  width:52.5mm;
+  height:29mm;
+}
+
+@media print {
+  body, page {
+    margin: 0;
+    box-shadow: 0;
+  }
+  .no-print{
+  display:none;
+  }
+}
+
+.showTd{
+  display:none;
+}
+
+/* Center the loader */
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid blue;
+ border-bottom: 16px solid blue;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 }
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
+  to{ bottom:0; opacity:1 }
+}
+
+#myDiv {
+  display: none;
+
+}
+</style>
+</head>
+
+<body onload="myFunction()">
+<div id="loader"></div>
+<!--Barcode slip generating App created-->
+<!--main div start--->
+
+<div ng-app="barcodeSlipApp" ng-controller="barcodeCtrl" style="display:none;" id="myDiv" class="animate-bottom">
+<!--no print is a class used for hiding form while printing-->
+<div class="container no-print">
+  <h2>Generate Barcode Slip</h2>
+  <!--form start used bootstrap to create form-->
+  <form name="productForm">
+    <div class="row">
+    <div class="form-group col-sm-8">
+      <label for="product">Product ID:</label>
+      <input type="text" name="product" placeholder="cosmorug34" class="form-control" id="product" ng-model="product_id" ng-minlength="6" ng-maxlength="10" ng-pattern="/^\w+$/" required>
+       <div ng-messages="productForm.product.$error" ng-if="productForm.product.$touched || productForm.product.$dirty">
+       <p ng-message="required" class="text-danger">Please enter product id</p>
+       <p ng-message="pattern" class="text-danger">Product ID  can only be alphanumeric with an optional underscore.</p>
+      <p ng-message="minlength" class="text-danger">Product ID should have at least 6 characters.</p>
+      <p ng-message="maxlength" class="text-danger">Product ID should have at most 10 characters.</p>
+    </div>
+    </div>
+    <div class="form-group col-sm-4">
+      <label for="rows_count">No. of Rows:</label>
+      <input type="number" placeholder="10" class="form-control" name="rows_count" id="rows_count" ng-model="rows_count" ng-pattern="/^[0-9]*$/" required>
+    </div>
+  </div>
+    <div class="form-group">
+      <label for="productName">Product Name:</label>
+      <input type="text" name="productName" placeholder="YOGAMAT" class="form-control" id="productName" ng-model="productName"  ng-pattern="/^\w+$/" required>
+       <div ng-messages="productForm.productName.$error" ng-if="productForm.productName.$touched || productForm.productName.$dirty">
+       <p ng-message="required" class="text-danger">Please enter product name</p>
+       <p ng-message="pattern" class="text-danger">Product Name  can only be alphanumeric with an optional underscore.</p>
+
+    </div>
+    </div>
+    <div class="form-group">
+      <label for="mrp">MRP:</label>
+      <input type="text" placeholder="699" class="form-control" name="mrp" id="mrp" ng-model="mrp" ng-pattern="/^[0-9]*$/" required>
+       <div ng-messages="productForm.mrp.$error" ng-if="productForm.mrp.$touched || productForm.mrp.$dirty">
+       <p ng-message="required" class="text-danger">Please enter product price</p>
+       <p ng-message="pattern" class="text-danger">Please enter valid price</p>
+ 	 </div>
+    </div>
+    <div class="row">
+    <div class="form-group col-sm-8">
+      <label for="size">Dimension:</label>
+      <input type="text" placeholder="240X240" class="form-control" name="size"id="size" ng-model="size" required>
+      <div ng-messages="productForm.size.$error" ng-if="productForm.size.$touched || productForm.size.$dirty">
+         <p ng-message="required" class="text-danger">Please enter product Size</p>
+      <p ng-message="pattern" class="text-danger">Weight should be in numbers</p>
+      </div>
+    </div>
+    <div class="form-group col-sm-4">
+  <label for="size_unit">Select Unit:</label>
+  <select class="form-control" id="size_unit" ng-model="selectedUnit" >
+    <option>cm</option>
+    <option>Metre</option>
+    <option>Inche</option>
+    <option>Feet</option>
+  </select>
+</div>
+</div>
+    <!--<div class="form-group">
+      <label for="weight">Weight:</label>
+      <input type="text" placeholder="400" class="form-control" name="weight" id="weight" ng-model="weight" ng-pattern="/^[0-9]*$/" required>
+       <div ng-messages="productForm.weight.$error" ng-if="productForm.weight.$touched || productForm.weight.$dirty">
+          <p ng-message="required" class="text-danger">Please enter product weight</p>
+       <p ng-message="pattern" class="text-danger">Weight should be in numbers</p>
+    </div>
+  </div>-->
+    <br>
+    <button type="button" ng-click="generateBarcode()" ng-disabled="productForm.$invalid" class="btn btn-primary">Display Barcode</button>
+    <button type="button" ng-click="printBarcode()" ng-disabled="productForm.$invalid" class="btn btn-primary">Print Page</button>
+  </form>
+  <!--form end-->
+</div>
+<br>
+<!--page on which slips display-->
+<page id="printpage" size="A4">
+  <table>
+  <tr ng-repeat="n in [] | limitRow:sticker_count" style="visibility:hidden">
+    <td  ng-repeat="m in [] | limitTd:sticker_count"> <span ng-show="IsVisible" style="font-size:10px;margin-left:10px;"><b>{{"PRODUCT NAME : "+productName}}</b></span><img id="barcode"/><p ng-show="IsVisible" style="font-size:10px;margin-left:10px;"><span>SIZE {{"("+selectedUnit+")"}}:{{size }}</span><br/><b><span>MRP : <span>&#8377;</span></span>{{ mrp + "/- (Inclusive of all taxes)"}}</b></p></td>
+</tr>
+</table>
+
+
+</page>
+<!--page end-->
+
+
+
+</div>
+<!--main div end haiving app decleration-->
+
+
+
+
+</body>
+<script>
+var myVar;
+
+function myFunction() {
+    myVar = setTimeout(showPage, 3000);
+}
+
+function showPage() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("myDiv").style.display = "block";
+}
+</script>
+
+
+</html>
