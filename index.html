@@ -184,14 +184,15 @@ td{
 <page id="printpage" size="A4">
   <table>
   <tr ng-repeat="n in [] | limitRow:sticker_count" style="visibility:hidden">
-    <td  ng-repeat="m in [] | limitTd:sticker_count"> <div ng-show="IsVisible" style="font-size:10px;margin-left:14px;margin-top:-10px;"><b>{{"PRODUCT NAME : "+productName}}</b></div><img id="barcode"/><p ng-show="IsVisible" style="font-size:10px;margin-left:10px;margin-top:-5px"><span>SIZE {{"("+selectedUnit+")"}}:{{size }}</span><br/><b><span>MRP : <span>&#8377;</span></span>{{ mrp + "/- (Inclusive of all taxes)"}}</b></p></td>
+    <td  ng-repeat="m in [] | limitTd:sticker_count"> <div ng-show="IsVisible" style="font-size:10px;margin-left:14px;margin-top:-10px;"><b>{{"PRODUCT NAME : "+productName}}</b></div><img id="barcode"/><p ng-show="IsVisible" style="font-size:10px;margin-left:10px;margin-top:-5px"><span>SIZE {{"("+selectedUnit+")"}}:{{size }}</span><br/></p></td>
 </tr>
 </table>
 
 
 </page>
 <!--page end-->
-
+<!--MRP PART AFTER BREAK TAG IN A4 SHEET AREA-->
+  <!--<b><span>MRP : <span>&#8377;</span></span>{{ mrp + "/- (Inclusive of all taxes)"}}</b>-->
 
 
 </div>
