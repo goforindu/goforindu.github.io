@@ -142,14 +142,10 @@ td{
 
     </div>
     </div>
-    <!--<div class="form-group">
+    <div class="form-group">
       <label for="mrp">MRP:</label>
-      <input type="text" placeholder="699" class="form-control" name="mrp" id="mrp" ng-model="mrp" ng-pattern="/^[0-9]*$/" required>
-       <div ng-messages="productForm.mrp.$error" ng-if="productForm.mrp.$touched || productForm.mrp.$dirty">
-       <p ng-message="required" class="text-danger">Please enter product price</p>
-       <p ng-message="pattern" class="text-danger">Please enter valid price</p>
- 	 </div>
-    </div>-->
+      <input type="text" placeholder="699" class="form-control" name="mrp" id="mrp" ng-model="mrp">
+    </div>
     <div class="row">
     <div class="form-group col-sm-8">
       <label for="size">Dimension:</label>
@@ -188,7 +184,7 @@ td{
 <page id="printpage" size="A4">
   <table>
   <tr ng-repeat="n in [] | limitRow:sticker_count" style="visibility:hidden">
-    <td  ng-repeat="m in [] | limitTd:sticker_count"> <div ng-show="IsVisible" style="font-size:10px;margin-left:14px;margin-top:-10px;"><b>{{"PRODUCT NAME : "+productName}}</b></div><img id="barcode"/><p ng-show="IsVisible" style="font-size:10px;margin-left:10px;margin-top:-5px"><span>SIZE {{"("+selectedUnit+")"}}:{{size }}</span><br/><!--<b><span>MRP : <span>&#8377;</span></span>{{ mrp + "/- (Inclusive of all taxes)"}}</b>--></p></td>
+    <td  ng-repeat="m in [] | limitTd:sticker_count"> <div ng-show="IsVisible" style="font-size:10px;margin-left:14px;margin-top:-10px;"><b>{{"PRODUCT NAME : "+productName}}</b></div><img id="barcode"/><p ng-show="IsVisible" style="font-size:10px;margin-left:10px;margin-top:-5px"><span>SIZE {{"("+selectedUnit+")"}}:{{size }}</span><br/><b><span>MRP : <span>&#8377;</span></span>{{ mrp + "/- (Inclusive of all taxes)"}}</b></p></td>
 </tr>
 </table>
 
